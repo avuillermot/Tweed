@@ -11,7 +11,6 @@ export interface IUser extends IBase {
 }
 
 const UserSchema: Schema = new Schema({
-    id: {type: String, required: false},
     lastName: { type: String, required: true },
     firstName: { type: String, required: true },
     email: { type: String, required: true, unique: true },

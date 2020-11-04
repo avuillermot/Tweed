@@ -3,7 +3,6 @@ import moment from "moment";
 import { IBase } from "../model-base";
 
 export interface ILogin extends IBase {
-    id: string,
     idUser: string,
     login: string,
     password: string,
@@ -15,7 +14,6 @@ export interface ILogin extends IBase {
 }
 
 const LoginSchema: Schema = new Schema({
-    id: { type: String, required: false },
     idUser: { type: String, required: true },
     login: { type: String, required: false, unique: true },
     password: { type: String, required: true, minlength: 6 },
