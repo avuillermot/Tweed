@@ -128,4 +128,21 @@ describe('Test about user & login', () => {
         expect(result, "Update not return true").equal(true);
         expect(user.lastName, "Last name is not correct").equal("ROUHANA");
     });
+
+    it('Logon', async () => {
+
+        let result: { login: string } = await ctrl.logon("confirm@test.com", "123456");
+        console.log(result);
+        //let login: ILogin = await Login.findOne({ login: "confirm@test.com", password: "123456" });
+
+
+    });
+
+    it('Generate password', async () => {
+
+        let result:boolean = await ctrl.generatePassword("confirm@test.com","avuillermot@hotmail.com");
+        //let login: ILogin = await Login.findOne({ login: "confirm@test.com", password: "123456" });
+
+
+    });
 });

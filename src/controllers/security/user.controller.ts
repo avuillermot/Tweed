@@ -1,5 +1,7 @@
+import generator from "generate-password";
 import User, { IUser } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
+import { sendNewPassword } from "./../mails/sender";
 
 let USER_ERROR: any = {
     PASSWORD_DIFF: "PASSWORD_DIFF",
@@ -59,6 +61,28 @@ export default class ServiceUser {
             if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) back = false;
         }
         else back = false;
+        return back;
+    }
+
+    public async logon(user: string, password: string): Promise<{ login: string }> {
+        let results: ILogin[] = await Login.find({ login: user, password: password, status: "ACTIVE" });
+        if (results.length == 0) throw new Error("Login not found");
+        if (results.length > 1) throw new Error("Too many login");
+        return { login: results[0].login };
+    }
+
+    public async generatePassword(user: string, email?: string): Promise<boolean> {
+        let back: boolean = true;
+        let pwds:string[] = generator.generateMultiple(1, { length: 10 });
+        let res = await Login.updateOne({ login: user }, { password: pwds[0] });
+        if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("Generate password error");
+
+        // send mail with new password
+        let myLogin: ILogin = await Login.findOne({ login: user });
+        let myUser: IUser = await User.findOne({ _id: myLogin.idUser });
+
+        if (email == null || email == undefined) email = myUser.email;
+        await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });
         return back;
     }
 }
