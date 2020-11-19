@@ -1,6 +1,6 @@
 import { connect, connection } from 'mongoose';
 
-export default class ApplicationDbSettings {
+export class ApplicationDbSettings {
     protected dbUrl: string = "mongodb://localhost:27017/mytest";
     protected debug: boolean = true;
 

@@ -64,11 +64,15 @@ export default class ServiceUser {
         return back;
     }
 
-    public async logon(user: string, password: string): Promise<{ login: string }> {
-        let results: ILogin[] = await Login.find({ login: user, password: password, status: "ACTIVE" });
-        if (results.length == 0) throw new Error("Login not found");
-        if (results.length > 1) throw new Error("Too many login");
-        return { login: results[0].login };
+    public async logon(login: string, password: string): Promise<{ login: string, email:string, entity:string }> {
+        let logins: ILogin[] = await Login.find({ login: login, password: password, status: "ACTIVE" });
+        console.log(logins);
+        if (logins.length == 0) throw new Error("Login not found");
+        if (logins.length > 1) throw new Error("Too many login");
+
+        let currentLogin: ILogin = logins[0];
+
+        return { login: currentLogin.login, email: currentLogin.login, entity: "" };
     }
 
     public async generatePassword(user: string, email?: string): Promise<boolean> {

@@ -6,8 +6,8 @@ export interface IUser extends IBase {
     lastName: string;
     firstName: string;
     email: string,
-    emailConfirmed: boolean,
-    phone: string
+    emailConfirmed: boolean;
+    phone: string;
 }
 
 const UserSchema: Schema = new Schema({
