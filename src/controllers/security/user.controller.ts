@@ -66,7 +66,7 @@ export default class ServiceUser {
 
     public async logon(login: string, password: string): Promise<{ login: string, email:string, entity:string }> {
         let logins: ILogin[] = await Login.find({ login: login, password: password, status: "ACTIVE" });
-        console.log(logins);
+        
         if (logins.length == 0) throw new Error("Login not found");
         if (logins.length > 1) throw new Error("Too many login");
 

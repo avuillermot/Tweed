@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 app.put('/logon', async (req, res) => {
     let servUser: ServiceUser = new ServiceUser();
-    console.log(req.body);
+    
     try {
         let back:any = await servUser.logon(req.body.login, req.body.password);
         res.send(back);
