@@ -28,3 +28,7 @@ export class ApplicationDbTestSettings extends ApplicationDbSettings {
     }
 }
 
+export class ApplicationSetting {
+    public static jtokenSecretKey: string = "PERRIGNY21160";
+}
+
