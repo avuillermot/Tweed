@@ -14,7 +14,7 @@ let db: DbSettings = new DbSettings();
 db.connection();
 
 app.use(cors())
-app.options('*', cors());
+//app.options('*', cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
