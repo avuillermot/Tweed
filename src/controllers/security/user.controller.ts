@@ -1,4 +1,4 @@
-import generator from "generate-password";
+//import generator from "generate-password";
 import User, { IUser } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
 import { sendNewPassword } from "./../mails/sender";
@@ -77,7 +77,7 @@ export default class ServiceUser {
 
     public async generatePassword(user: string, email?: string): Promise<boolean> {
         let back: boolean = true;
-        let pwds:string[] = generator.generateMultiple(1, { length: 10 });
+        /*let pwds:string[] = generator.generateMultiple(1, { length: 10 });
         let res = await Login.updateOne({ login: user }, { password: pwds[0] });
         if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("Generate password error");
 
@@ -86,7 +86,7 @@ export default class ServiceUser {
         let myUser: IUser = await User.findOne({ _id: myLogin.idUser });
 
         if (email == null || email == undefined) email = myUser.email;
-        //await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });
+        //await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });*/
         return back;
     }
 }
