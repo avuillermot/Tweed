@@ -86,7 +86,7 @@ export default class ServiceUser {
         let myUser: IUser = await User.findOne({ _id: myLogin.idUser });
 
         if (email == null || email == undefined) email = myUser.email;
-        await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });
+        //await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });
         return back;
     }
 }

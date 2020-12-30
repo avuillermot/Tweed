@@ -2,11 +2,11 @@ import { expect } from 'chai';
 import "mocha";
 import UserController, { ICreateUser, IUpdateUser } from "../src/controllers/security/user.controller";
 import User, { IUser} from "../src/models/security/user";
-import { ApplicationDbTestSettings } from "../src/config/config";
+import { ApplicationDbSettings } from "../src/config/config";
 import Login, { ILogin } from '../src/models/security/login';
 
 describe('Test about user & login', () => {
-    let dbSettings: ApplicationDbTestSettings = new ApplicationDbTestSettings();
+    let dbSettings: ApplicationDbSettings = new ApplicationDbSettings();
     dbSettings.connection();
     dbSettings.dropCollection("users");
     dbSettings.dropCollection("logins");

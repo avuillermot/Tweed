@@ -4,12 +4,12 @@ import url = require('url');
 import moment = require('moment');
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
-import { ApplicationDbTestSettings as DbSettings, ApplicationSetting } from './config/config';
+import { ApplicationDbSettings as DbSettings, ApplicationSetting } from './config/config';
 import bodyParser = require('body-parser');
 import ServiceUser from '../src/controllers/security/user.controller'
 
+console.log(process.env.MONGOHOST);
 const app = express();
-const PORT = 8001;
 let db: DbSettings = new DbSettings();
 db.connection();
 
@@ -33,6 +33,6 @@ app.put('/logon', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log('[server]: Server is running at https://localhost:%s', PORT);
+app.listen(process.env.PORT, () => {
+    console.log('[server]: Server is running at https://localhost:%s', process.env.PORT);
 });
