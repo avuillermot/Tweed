@@ -132,7 +132,6 @@ describe('Test about user & login', () => {
     it('Logon', async () => {
 
         let result: { login: string } = await ctrl.logon("confirm@test.com", "123456");
-        console.log(result);
         //let login: ILogin = await Login.findOne({ login: "confirm@test.com", password: "123456" });
 
 

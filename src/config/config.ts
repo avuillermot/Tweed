@@ -14,7 +14,7 @@ export class ApplicationDbSettings {
             console.log(connection.host);
             console.log(connection.port);
         }
-        }
+    }
 
     public dropCollection(collection: string): void {
         connection.dropCollection(collection);
