@@ -1,4 +1,5 @@
 FROM node:latest
+ENV PORT=8081 MONGOHOST=mongodb://localhost:27017/tweed
 RUN mkdir -p /usr/nodeapp
 COPY . /usr/nodeapp
 WORKDIR /usr/nodeapp

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "windows": "SET PORT=8081 && SET MONGOHOST=mongodb://localhost:27017/tweed && nodemon src/index.ts",
 	  "linux": "PORT=8081 MONGOHOST=mongodb://localhost:27017/tweed nodemon src/index.ts",
