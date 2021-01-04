@@ -5,4 +5,3 @@ COPY . /usr/nodeapp
 WORKDIR /usr/nodeapp
 RUN npm install --verbose
 CMD ["npx","ts-node","src/index.ts"]
-EXPOSE PORT;
