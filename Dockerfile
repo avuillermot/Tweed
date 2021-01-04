@@ -5,4 +5,5 @@ COPY . /usr/nodeapp
 WORKDIR /usr/nodeapp
 RUN ls
 RUN npm install --verbose
-CMD ["node","src/index.ts"]
+CMD ["npx","ts-node","src/index.ts"]
+RUN ls src
