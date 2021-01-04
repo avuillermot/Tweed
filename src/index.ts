@@ -33,6 +33,10 @@ app.put('/logon', async (req, res) => {
     }
 });
 
+app.get('/alive', async (req, res) => {
+    res.send("OK");
+});
+
 app.listen(process.env.PORT, () => {
     console.log('[server]: Server is running at https://localhost:%s', process.env.PORT);
 });
