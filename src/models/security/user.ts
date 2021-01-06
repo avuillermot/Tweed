@@ -34,13 +34,14 @@ UserSchema.pre("save", function (next) {
 });
 
 UserSchema.pre("updateOne", function (next) {
-    if (this.getUpdate().lastName != null) this.getUpdate().lastName = this.getUpdate().lastName.toUpperCase();
-    if (this.getUpdate().firstName != null) {
-        if (this.getUpdate().firstName.length > 0) {
-            this.getUpdate().firstName = this.getUpdate().firstName.substring(0, 1).toUpperCase() + this.getUpdate().firstName.substring(1);
+    let _update = this["_update"];
+    if (_update["lastName"] != null) _update["lastName"] = _update["lastName"].toUpperCase(); 
+    if (_update["firstName"] != null) {
+        if (_update["firstName"].length > 0) {
+            _update["firstName"] = _update["firstName"].substring(0, 1).toUpperCase() + _update["firstName"].substring(1);
         }
     }
-    this.getUpdate().updated = moment().utc();
+    _update["updated"] = moment().utc();
     next();
 });
 
