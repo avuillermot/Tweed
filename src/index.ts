@@ -34,7 +34,7 @@ app.put('/logon', async (req, res) => {
 });
 
 app.get('/alive', async (req, res) => {
-    res.send("OK");
+    res.send("OK TWEED");
 });
 
 app.listen(process.env.PORT, () => {
