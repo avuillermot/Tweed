@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 /**
  * @api {put} /logon [Logon]
  * @apiDescription Log a user and return token
- * @apiSuccess (200) {JSON} Token encrypted
+ * @apiSuccess (200) {JSON} token encrypted (token id, login, entities[], email, expire, type credentials[])
  */
 app.put('/logon', async (req, res) => {
     let servUser: ServiceUser = new ServiceUser();
