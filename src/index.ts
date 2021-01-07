@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 /**
  * @api {put} /logon [Logon]
  * @apiDescription Log a user and return token
- * @apiSuccess (200) [{token}]
+ * @apiSuccess (200) {JSON} Token encrypted
  */
 app.put('/logon', async (req, res) => {
     let servUser: ServiceUser = new ServiceUser();
@@ -46,7 +46,6 @@ app.put('/logon', async (req, res) => {
 /**
  * @api {get} /alive [Keep alive]
  * @apiDescription Indicate if web site is alive
- * @apiSuccess (200) [{String}]
  */
 app.get('/alive', async (req, res) => {
     res.send("OK TWEED");
