@@ -1,6 +1,7 @@
 import express = require('express');
+import https = require('https');
+import fs = require('fs');
 import cors = require('cors')
-import url = require('url');
 import moment = require('moment');
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
@@ -8,7 +9,12 @@ import { ApplicationDbSettings as DbSettings, ApplicationSetting } from './confi
 import bodyParser = require('body-parser');
 import ServiceUser from '../src/controllers/security/user.controller'
 
-console.log(process.env.MONGOHOST);
+console.log("WORKSPACE:"+__dirname);
+const options = {
+    key: fs.readFileSync('./src/config/key.pem'),
+    cert: fs.readFileSync('./src/config/cert.pem')
+};
+
 const app = express();
 let db: DbSettings = new DbSettings();
 db.connection();
@@ -37,6 +43,6 @@ app.get('/alive', async (req, res) => {
     res.send("OK TWEED");
 });
 
-app.listen(process.env.PORT, () => {
+https.createServer(options, app).listen(process.env.PORT, () => {
     console.log('[server]: Server is running at https://localhost:%s', process.env.PORT);
 });
