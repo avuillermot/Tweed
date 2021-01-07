@@ -1,7 +1,7 @@
 import { connect, connection } from 'mongoose';
 
 export class ApplicationDbSettings {
-    protected dbUrl: string = process.env.MONGOHOST.replace(' ','');
+    protected dbUrl: string = <string>process.env.MONGOHOST;
     protected debug: boolean = true;
 
     public connection(): void {
@@ -13,6 +13,7 @@ export class ApplicationDbSettings {
             console.log("open connection :");
             console.log(connection.host);
             console.log(connection.port);
+            console.log(connection.name);
         }
     }
 
