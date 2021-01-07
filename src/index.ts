@@ -26,7 +26,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 /**
  * @api {put} /logon [Logon]
- * @apiDescription Log a user and return token
+ * @apiDescription Log a user and return token. Login and password are sent in body.
+ * @apiParam {JSON} body {login: xxxxx, password: xxxx}
  * @apiSuccess (200) {JSON} token encrypted (token id, login, entities[], email, expire, type credentials[])
  */
 app.put('/logon', async (req, res) => {
@@ -46,6 +47,7 @@ app.put('/logon', async (req, res) => {
 /**
  * @api {get} /alive [Keep alive]
  * @apiDescription Indicate if web site is alive
+ * @apiSuccess (200) {String} _ OK TWEED
  */
 app.get('/alive', async (req, res) => {
     res.send("OK TWEED");
