@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 /**
  * @api {put} /logon [Logon]
  * @apiDescription Log a user and return token
- * @apiSuccess (200) [{token}] id [token id]
+ * @apiSuccess (200) [{token}]
  */
 app.put('/logon', async (req, res) => {
     let servUser: ServiceUser = new ServiceUser();
