@@ -3,11 +3,12 @@ import https = require('https');
 import fs = require('fs');
 import cors = require('cors')
 import moment = require('moment');
+import sendmail from 'sendmail';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import { ApplicationDbSettings as DbSettings, ApplicationSetting } from './config/config';
-import bodyParser = require('body-parser');
-import ServiceUser from '../src/controllers/security/user.controller'
+import bodyParser from 'body-parser';
+import ServiceUser from '../src/controllers/security/user.controller';
 
 console.log("WORKSPACE:"+__dirname);
 const options = {
@@ -24,6 +25,9 @@ app.options('*', cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(function (req, res, next) {
+    next();
+});
 
 const manageError = function (req, res, exception, httpCode) {
     console.log(exception);
@@ -50,6 +54,11 @@ app.put('/logon', async (req, res) => {
     }
 });
 
+/**
+ * @api {post} / [Create user & login]
+ * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
+ * @apiSuccess (200)
+ */
 app.post('/', async (req, res) => {
     try {
         let servUser: ServiceUser = new ServiceUser();
@@ -61,6 +70,25 @@ app.post('/', async (req, res) => {
     }
 });
 
+app.put('/send/confirm/email', async (req, res) => {
+    console.log("send email");
+    let email: string = ""
+
+    if (req.body.forceEmail != null) {
+        console.log("Force email :" + req.body.forceEmail);
+        email = req.body.forceEmail;
+    }
+    sendmail({
+        from: 'avuillermot@gmail.com',
+        to: email,
+        subject: 'test sendmail',
+        html: 'Mail of test sendmail ',
+    }, function (err, reply) {
+        console.log(err && err.stack);
+        console.dir(reply);
+    });
+    res.send();
+});
 /**
  * @api {get} /alive [Keep alive]
  * @apiDescription Indicate if web site is alive
