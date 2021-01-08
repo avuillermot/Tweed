@@ -57,7 +57,7 @@ app.put('/logon', async (req, res) => {
 /**
  * @api {post} / [Create user & login]
  * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
- * @apiSuccess (200)
+ * @apiSuccess (200) _
  */
 app.post('/', async (req, res) => {
     try {
