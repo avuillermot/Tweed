@@ -24,6 +24,12 @@ app.options('*', cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+const manageError = function (req, res, exception, httpCode) {
+    console.log(exception);
+    if (exception.message != null && exception.message != undefined && exception.message != "") res.status(500).send(exception.message);
+    else res.status(500).send(exception);
+}
 /**
  * @api {put} /logon [Logon]
  * @apiDescription Log a user and return token. Login and password are sent in body.
@@ -40,7 +46,18 @@ app.put('/logon', async (req, res) => {
         res.send({ token: encrypt });
     }
     catch (ex) {
-        res.status(401).send();
+        manageError(req, res, ex, 401);
+    }
+});
+
+app.post('/', async (req, res) => {
+    try {
+        let servUser: ServiceUser = new ServiceUser();
+        await servUser.create(req.body);
+        res.send();
+    }
+    catch (ex) {
+        manageError(req, res, ex, 500);
     }
 });
 

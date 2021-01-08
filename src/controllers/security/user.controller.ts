@@ -25,6 +25,7 @@ export interface IUpdateUser {
 export default class ServiceUser {
     public async create(user: ICreateUser): Promise<IUser> {
 
+        console.log(user);
         if (user.confirmPassword != user.password) throw new Error(USER_ERROR.PASSWORD_DIFF);
         if (user.password.length < 6) throw new Error(USER_ERROR.PASSWORD_SHORT);
 
