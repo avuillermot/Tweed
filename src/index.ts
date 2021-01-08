@@ -79,7 +79,7 @@ app.put('/send/confirm/email', async (req, res) => {
         email = req.body.forceEmail;
     }
     sendmail({
-        from: 'avuillermot@gmail.com',
+        from: 'xxxxx@gmail.com',
         to: email,
         subject: 'test sendmail',
         html: 'Mail of test sendmail ',
