@@ -74,11 +74,11 @@ app.post('/', async (req, res) => {
 });
 
 /**
- * @api {put} /send/confirm/email [Send an email to confirm account]
+ * @api {put} /send/confirm/email [Confirm account]
  * @apiDescription Take all logins with MAIL_CONFIRMATION_TO_SEND status and update to WAIT_ACCOUNT_CONFIRMATION status. 
  * @apiParam {JSON} body {forceEmail: xxxxx} [Send all email to this email (use only in dev mode)]
- * @apiSuccess (200) {String} _ 
- * @apiError (500) {String}
+ * @apiSuccess 200
+ * @apiError 500
  */
 app.put('/send/confirm/email', async (req, res) => {
     let email: string = ""
