@@ -78,7 +78,7 @@ app.post('/', async (req, res) => {
  * @apiDescription Take all logins with MAIL_CONFIRMATION_TO_SEND status and update to WAIT_ACCOUNT_CONFIRMATION status. 
  * @apiParam {JSON} body {forceEmail: xxxxx} [Send all email to this email (use only in dev mode)]
  * @apiSuccess (200) {String} _ 
- * @apiError (500) {String}
+ * @apiError (500) {String} _
  */
 app.put('/send/confirm/email', async (req, res) => {
     let email: string = ""
