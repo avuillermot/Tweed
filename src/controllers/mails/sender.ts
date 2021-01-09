@@ -30,21 +30,6 @@ Parameter.findOne({ KEY: "EMAIL_SENDER_PASSWORD" }).then((data) => {
 	if (sender != "" && senderPassword != "") initTransporter();
 });
 
-/*exports.sendCheckMail = async function (params: {firstName:string, email:strn}) {
-
-	if (to != null && to != undefined) {
-		let info = await transporter.sendMail({
-			from: 'avuillermot@hotmail.com', // sender address
-			to: to.email, // list of receivers
-			subject: "xxxxx Confirmer votre adresse mail !", // Subject line
-			//text: "Cliquez sur ce lien pour confirmer votre adresse mail : www.lequipe.fr", // plain text body
-			html: "<div>Bonjour" + to.firstName + "!</div><div>Cliquez sur ce lien pour confirmer votre adresse mail <a href='config.domain/confirm/email/" + to.email + "'>Ouvrir</a></div>" // html body
-		});
-
-		console.log("Message sent: %s", info.messageId);
-	}
-};*/
-
 export async function sendNewPassword (params: { firstName: string, email:string, password: string, domain: string }) {
 
 	if (params != null && params != undefined) {
@@ -100,6 +85,7 @@ export async function confirmAccounts(params: { email: string } = null): Promise
 			}
 			catch (ex) {
 				console.log("MAIL_CONFIRMATION_TO_SEND_ERROR");
+				await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_CONFIRMATION_TO_SEND_ERROR" });
 				hasError = true;
 			}
 		};

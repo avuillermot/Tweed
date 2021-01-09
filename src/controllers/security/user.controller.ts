@@ -1,4 +1,4 @@
-//import generator from "generate-password";
+import generator from "generate-password";
 import User, { IUser } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
 
@@ -54,9 +54,8 @@ export default class ServiceUser {
         return back;
     }
 
-    public async update(user: IUpdateUser): Promise<boolean> {
+    public async update(user: IUpdateUser, updatedBy: string): Promise<boolean> {
         let back: boolean = true;
-        let updatedBy: string = "update_user";
         let login: ILogin = await Login.findOne({ _id: user.id });
         if (login != null) {
             let res: any = await User.updateOne({ _id: login.idUser }, { lastName: user.lastName, firstName: user.firstName, updatedBy: updatedBy });
@@ -77,30 +76,9 @@ export default class ServiceUser {
         return { login: currentLogin.login, email: currentLogin.login, entity: "" };
     }
 
-    public async generatePassword(user: string, email?: string): Promise<boolean> {
-        let back: boolean = true;
-        /*let pwds:string[] = generator.generateMultiple(1, { length: 10 });
-        let res = await Login.updateOne({ login: user }, { password: pwds[0] });
+    public async saveNewPassword(login: string): Promise<void> {
+        let pwds:string[] = generator.generateMultiple(1, { length: 10 });
+        let res = await Login.updateOne({ login: login }, { password: pwds[0], status: "MAIL_NEW_PASSWORD_TO_SEND" });
         if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("Generate password error");
-
-        // send mail with new password
-        let myLogin: ILogin = await Login.findOne({ login: user });
-        let myUser: IUser = await User.findOne({ _id: myLogin.idUser });
-
-        if (email == null || email == undefined) email = myUser.email;
-        //await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });*/
-        return back;
-    }
-
-    public async getLoginByStatus(status: string): Promise<string[]> {
-        let emails: string[] = new Array<string>();
-        const logins: ILogin[] = await Login.find({ status: status });
-
-        logins.forEach(async (value) => {
-            const user: IUser = await User.findOne({ _id: value.idUser });
-            emails.push(user.email);
-        });
-        console.log(emails);
-        return emails;
     }
 }

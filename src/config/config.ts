@@ -17,8 +17,8 @@ export class ApplicationDbSettings {
         }
     }
 
-    public dropCollection(collection: string): void {
-        connection.dropCollection(collection);
+    public dropDb(): void {
+        connection.dropDatabase();
     }
 }
 

@@ -75,10 +75,12 @@ app.post('/', async (req, res) => {
 
 /**
  * @api {put} /send/confirm/email [Confirm account]
- * @apiDescription Take all logins with MAIL_CONFIRMATION_TO_SEND status and update to WAIT_ACCOUNT_CONFIRMATION status. 
- * @apiParam {JSON} body {forceEmail: xxxxx} [Send all email to this email (use only in dev mode)]
- * @apiSuccess All mails sent
- * @apiError Mails are pending
+ * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
+ * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
+ * In case of error, the new status is MAIL_CONFIRMATION_TO_SEND_ERROR.
+ * @apiParam {JSON} Body {forceEmail: xxxxx} <br/> Send all email to this email (use only in dev mode). In production no parameter require.
+ * @apiSuccess (Succes) {Number} HttpCode 200
+ * @apiError (Error) {Number} HttpCode 500
  * 
  */
 app.put('/send/confirm/email', async (req, res) => {

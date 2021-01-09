@@ -30,6 +30,12 @@ LoginSchema.pre("save", function (next) {
     next();
 });
 
+LoginSchema.pre("updateOne", function (next) {
+    let _update = this["_update"];
+    _update["updated"] = moment().utc();
+    next();
+});
+
 export default model<ILogin>('Login', LoginSchema);
 
 
