@@ -39,8 +39,9 @@ const manageError = function (req, res, exception, httpCode) {
 /**
  * @api {put} /logon [Logon]
  * @apiDescription Log a user and return token. Login and password are sent in body.
- * @apiParam {JSON} body {login: xxxxx, password: xxxx}
- * @apiSuccess (200) {JSON} token encrypted (token id, login, entities[], email, expire, type credentials[])
+ * @apiParam {JSON} Body {login: xxxxx, password: xxxx}
+ * @apiSuccess (Succes) {JSON} Token Token encrypted (token id, login, entities[], email, expire, type credentials[])
+ * @apiError (Error) (Number) HttpCode 401
  */
 app.put('/logon', async (req, res) => {
     let servUser: ServiceUser = new ServiceUser();
