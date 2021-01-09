@@ -79,6 +79,7 @@ app.post('/', async (req, res) => {
  * @apiParam {JSON} body {forceEmail: xxxxx} [Send all email to this email (use only in dev mode)]
  * @apiSuccess 200
  * @apiError 500
+ * 
  */
 app.put('/send/confirm/email', async (req, res) => {
     let email: string = ""
