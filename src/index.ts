@@ -59,7 +59,8 @@ app.put('/logon', async (req, res) => {
 /**
  * @api {post} / [Create user & login]
  * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
- * @apiSuccess (200) _ 
+ * @apiSuccess (200) _
+ * @apiSuccess (500) _
  */
 app.post('/', async (req, res) => {
     try {
@@ -72,16 +73,27 @@ app.post('/', async (req, res) => {
     }
 });
 
+/**
+ * @api {put} /send/confirm/email [Send an email to confirm account]
+ * @apiDescription Take all logins with MAIL_CONFIRMATION_TO_SEND status and update to WAIT_ACCOUNT_CONFIRMATION status. 
+ * @apiParam {JSON} body {forceEmail: xxxxx} [Send all email to this email (use only in dev mode)]
+ * @apiSuccess (200) {String} _ 
+ * @apiError (500) {String}
+ */
 app.put('/send/confirm/email', async (req, res) => {
-    console.log("send email");
     let email: string = ""
 
     if (req.body.forceEmail != null) {
         console.log("Force email :" + req.body.forceEmail);
         email = req.body.forceEmail;
     }
-    confirmAccounts({email: email});
-    res.send();
+    try {
+        await confirmAccounts({ email: email });
+        res.send();
+    }
+    catch (ex) {
+        manageError(req, res, ex, 500);
+    }
 });
 /**
  * @api {get} /alive [Keep alive]

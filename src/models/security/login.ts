@@ -1,4 +1,4 @@
-import { Schema, Document, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import moment from "moment";
 import { IBase } from "../model-base";
 
@@ -31,4 +31,6 @@ LoginSchema.pre("save", function (next) {
 });
 
 export default model<ILogin>('Login', LoginSchema);
+
+
 

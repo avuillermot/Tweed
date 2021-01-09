@@ -1,15 +1,33 @@
 import nodemailer = require("nodemailer");
 import User, { IUser } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
+import Parameter, { IParameter } from "../../models/parameter";
 
-const transporter = nodemailer.createTransport({
-	host: "smtp.live.com",
-	port: 587,
-	secure: false, // true for 465, false for other ports
-	auth: {
-		user: "",
-		pass: ""
-	}
+let sender: string = "";
+let senderPassword: string = "";
+let transporter: any = null;
+
+let initTransporter = function () {
+	transporter = nodemailer.createTransport({
+		host: "smtp.live.com",
+		port: 587,
+		secure: false, // true for 465, false for other ports
+		auth: {
+			user: sender,
+			pass: senderPassword
+		}
+	});
+	console.log("Email transporter ready !");
+};
+
+Parameter.findOne({ KEY: "EMAIL_SENDER" }).then((data) => {
+	sender = data.VALUE;
+	if (sender != "" && senderPassword != "") initTransporter();
+});
+
+Parameter.findOne({ KEY: "EMAIL_SENDER_PASSWORD" }).then((data) => {
+	senderPassword = data.VALUE;
+	if (sender != "" && senderPassword != "") initTransporter();
 });
 
 /*exports.sendCheckMail = async function (params: {firstName:string, email:strn}) {
@@ -50,32 +68,41 @@ const confirmAccount = async function (email: string, username: string) {
 	html += "Si vous avez des questions concernant la plateforme, n’hésitez pas à nous contacter à contact@allodocteur.fr";
 
 	var message = {
-		from: "",
-		to: "",
+		from: sender,
+		to: email,
 		subject: "Confirmation de votre compte",
 		text: "Plaintext version of the message",
 		html: html
 	};
 
-	const response = await transporter.sendMail(message);
+	try {
+		const response = await transporter.sendMail(message);
+	}
+	catch (ex) {
+		throw new Error("MAIL_CONFIRMATION_TO_SEND_ERROR")
+	}
 };
 
-export async function confirmAccounts(params: { email: string } = null) {
-	let emails: string[] = new Array<string>();
-	const logins: ILogin[] = await Login.find({ status: 'MAIL_CONFIRMATION_TO_SEND' });
+export async function confirmAccounts(params: { email: string } = null): Promise<void> {
 
-	logins.forEach(async (value) => {
-		const user: IUser = await User.findOne({ _id: value.idUser });
-		if (params == null && params.email == null) confirmAccount(user.email, user.email);
-		else {
+	const logins: ILogin[] = await Login.find({ status: 'MAIL_CONFIRMATION_TO_SEND' });
+	let hasError: boolean = false;
+
+	if (logins.length > 0) {
+		for (let i: number = 0; i < logins.length; i++) {
 			try {
-				confirmAccount(params.email, user.email);
-				const result = await Login.updateOne({ _id: value._id }, { status: "WAIT_ACCOUNT_CONFIRMATION" });
+				const user: IUser = await User.findOne({ _id: logins[i].idUser });
+				if (params == null && params.email == null) confirmAccount(user.email, user.email);
+				else {
+					await confirmAccount(params.email, user.email);
+					await Login.updateOne({ _id: logins[i]._id }, { status: "WAIT_ACCOUNT_CONFIRMATION" });
+				}
 			}
 			catch (ex) {
-
+				console.log("MAIL_CONFIRMATION_TO_SEND_ERROR");
+				hasError = true;
 			}
-		}
-	});
-	return emails;
+		};
+	}
+	if (hasError) throw new Error("MAIL_CONFIRMATION_TO_SEND_ERROR");
 }
