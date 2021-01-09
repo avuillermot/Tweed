@@ -1,7 +1,6 @@
 //import generator from "generate-password";
 import User, { IUser } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
-import { sendNewPassword } from "./../mails/sender";
 
 let USER_ERROR: any = {
     PASSWORD_DIFF: "PASSWORD_DIFF",
@@ -91,5 +90,17 @@ export default class ServiceUser {
         if (email == null || email == undefined) email = myUser.email;
         //await sendNewPassword({ firstName: myUser.firstName, password: pwds[0], domain:"domain",email: email });*/
         return back;
+    }
+
+    public async getLoginByStatus(status: string): Promise<string[]> {
+        let emails: string[] = new Array<string>();
+        const logins: ILogin[] = await Login.find({ status: status });
+
+        logins.forEach(async (value) => {
+            const user: IUser = await User.findOne({ _id: value.idUser });
+            emails.push(user.email);
+        });
+        console.log(emails);
+        return emails;
     }
 }

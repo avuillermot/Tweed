@@ -1,14 +1,16 @@
 import express = require('express');
 import https = require('https');
 import fs = require('fs');
-import cors = require('cors')
+import cors from 'cors';
 import moment = require('moment');
-import sendmail from 'sendmail';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
+import { confirmAccounts } from '../src/controllers/mails/sender';
 import { ApplicationDbSettings as DbSettings, ApplicationSetting } from './config/config';
 import bodyParser from 'body-parser';
 import ServiceUser from '../src/controllers/security/user.controller';
+import { IUser } from './models/security/user';
+import { ILogin } from './models/security/login';
 
 console.log("WORKSPACE:"+__dirname);
 const options = {
@@ -57,7 +59,7 @@ app.put('/logon', async (req, res) => {
 /**
  * @api {post} / [Create user & login]
  * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
- * @apiSuccess (200) _
+ * @apiSuccess (200) _ 
  */
 app.post('/', async (req, res) => {
     try {
@@ -78,15 +80,7 @@ app.put('/send/confirm/email', async (req, res) => {
         console.log("Force email :" + req.body.forceEmail);
         email = req.body.forceEmail;
     }
-    sendmail({
-        from: 'xxxxx@gmail.com',
-        to: email,
-        subject: 'test sendmail',
-        html: 'Mail of test sendmail ',
-    }, function (err, reply) {
-        console.log(err && err.stack);
-        console.dir(reply);
-    });
+    confirmAccounts({email: email});
     res.send();
 });
 /**
