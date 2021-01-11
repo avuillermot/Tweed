@@ -74,14 +74,13 @@ app.post('/', async (req, res) => {
 });
 
 /**
- * @api {put} /send/confirm/email [Confirm account]
+ * @api {put} /send/confirm/email [Set mail to confirm account]
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
  * In case of error, the new status is MAIL_CONFIRMATION_TO_SEND_ERROR.
  * @apiParam {JSON} Body {forceEmail: xxxxx} <br/> Send all email to this email (use only in dev mode). In production no parameter require.
  * @apiSuccess (Succes) {Number} HttpCode 200
  * @apiError (Error) {Number} HttpCode 500
- * 
  */
 app.put('/send/confirm/email', async (req, res) => {
     let email: string = ""
@@ -106,18 +105,29 @@ app.put('/send/confirm/email', async (req, res) => {
 app.get('/alive', async (req, res) => {
     res.send("OK TWEED");
 });
-
+/**
+ * @api {get} /confirm/account [Confirm account]
+ * @apiDescription Confirm account set in query string.<br/>
+ * @apiParam {QueryString} code Login of the account to confim
+ * @apiParam {QueryString} returnUrl Redirect to this URL after confirmation.
+ * @apiSuccess (Succes) {Number} HttpCode 302
+ * @apiError (Error) {Number} HttpCode 500
+ */
 app.get('/confirm/account', async (req, res) => {
-    const queryObject:any = url.parse(req.url, true).query;
-    console.log(queryObject);
-    let servUser: ServiceUser = new ServiceUser();
-    await servUser.setAccountActive(queryObject.code);
+    try {
+        const queryObject: any = url.parse(req.url, true).query;
+        console.log(queryObject);
+        let servUser: ServiceUser = new ServiceUser();
+        await servUser.setAccountActive(queryObject.code);
 
-    res.writeHead(302, {
-        'Location': queryObject.returnUrl
-    });
-    res.end();
-    res.send();
+        res.writeHead(302, {
+            'Location': queryObject.returnUrl
+        });
+        res.end();
+    }
+    catch (ex) {
+        res.status(500).send();
+    }
 });
 
 https.createServer(options, app).listen(process.env.PORT, () => {
