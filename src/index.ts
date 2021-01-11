@@ -6,7 +6,7 @@ import url from 'url';
 import moment = require('moment');
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
-import { confirmAccounts } from '../src/controllers/mails/sender';
+import { confirmAccounts, sendNewPasswords } from '../src/controllers/mails/sender';
 import { ApplicationDbSettings as DbSettings, ApplicationSetting } from './config/config';
 import bodyParser from 'body-parser';
 import ServiceUser from '../src/controllers/security/user.controller';
@@ -74,9 +74,8 @@ app.post('/', async (req, res) => {
         manageError(req, res, ex, 500);
     }
 });
-
 /**
- * @api {put} /send/confirm/email [Send mail to confirm account]
+ * @api {put} /send/confirm/email [Confirm account]
  * @apiGroup Users
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
@@ -89,11 +88,33 @@ app.put('/send/confirm/email', async (req, res) => {
     let email: string = ""
 
     if (req.body.forceEmail != null) {
-        console.log("Force email :" + req.body.forceEmail);
+        console.log("Send mail confirm account - force email :" + req.body.forceEmail);
         email = req.body.forceEmail;
     }
     try {
         await confirmAccounts({ email: email });
+        res.send();
+    }
+    catch (ex) {
+        manageError(req, res, ex, 500);
+    }
+});
+/**
+ * @api {put} /send/generate/password [Generate password]
+ * @apiGroup Users
+ * @apiDescription todo
+ * @apiParam {JSON} Body {forceEmail: xxxxx} <br/> Send all email to this email (use only in dev mode). In production no parameter require.
+ * @apiSuccess (Succes) {Number} HttpCode 200
+ * @apiError (Error) {Number} HttpCode 500
+ */
+app.put('/send/generate/password', async (req, res) => {
+    let email: string = ""
+    if (req.body.forceEmail != null) {
+        console.log("Send mail new password - force email :" + req.body.forceEmail);
+        email = req.body.forceEmail;
+    }
+    try {
+        await sendNewPasswords({ email: email });
         res.send();
     }
     catch (ex) {

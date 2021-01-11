@@ -31,21 +31,53 @@ Parameter.findOne({ KEY: "EMAIL_SENDER_PASSWORD" }).then((data) => {
 	if (sender != "" && senderPassword != "") initTransporter();
 });
 
-export async function sendNewPassword (params: { firstName: string, email:string, password: string, domain: string }) {
+const sendNewPassword = async function(params: { to: string, password: string, template: Buffer}) {
 
 	if (params != null && params != undefined) {
-		console.log(params.email);
-		let info = await transporter.sendMail({
-			from: 'avuillermot@hotmail.com', // sender address
-			to: params.email, // list of receivers
-			subject: "xxxxx Confirmer votre adresse mail !", // Subject line
-			//text: "Cliquez sur ce lien pour confirmer votre adresse mail : www.lequipe.fr", // plain text body
-			html: "<div>Bonjour " + params.firstName + ", </div><div>Votre nouveau mot passe est : " + params.password + ". Cliquez sur ce lien pour confirmer votre adresse mail <a href='" + params.domain + "'>Ouvrir</a></div>" // html body
-		});
+		let body: string = params.template.toString();
+		while (body.indexOf("{{Password}}") > -1) body = body.replace("{{Password}}", params.password);
 
-		//console.log("Message sent: %s", info.messageId);
+		let message = {
+			from: sender,
+			to: params.to,
+			subject: "Votre nouveau mot de passe",
+			html: body
+		};
+
+		try {
+			const response = await transporter.sendMail(message);
+		}
+		catch (ex) {
+			console.log(ex);
+			throw new Error("MAIL_NEW_PASSWORD_TO_SEND_ERROR")
+		}
 	}
 };
+
+export async function sendNewPasswords(params: { email: string } = null): Promise<void> {
+
+	const htmlTemplate: Buffer = fs.readFileSync("src/html-template/new-password.html");
+
+	const logins: ILogin[] = await Login.find({ status: 'MAIL_NEW_PASSWORD_TO_SEND' });
+	let hasError: boolean = false;
+
+	if (logins.length > 0) {
+		for (let i: number = 0; i < logins.length; i++) {
+			try {
+				console.log("Send new password email for idUser :" + logins[i].idUser);
+				const user: IUser = await User.findOne({ _id: logins[i].idUser });
+				if (params == null && params.email == null) await sendNewPassword({ template: htmlTemplate, to: user.email, password: logins[i].password });
+				else await sendNewPassword({ template: htmlTemplate, to: params.email, password: logins[i].password });
+				await Login.updateOne({ _id: logins[i]._id }, { status: "ACTIVE", updatedBy: 'mail_new_password_send' });
+			}
+			catch (ex) {
+				await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_NEW_PASSWORD_TO_SEND_EROR", updatedBy: 'mail_new_password_send' });
+				hasError = true;
+			}
+		};
+	}
+	if (hasError) throw new Error("MAIL_NEW_PASSWORD_TO_SEND_EROR");
+}
 
 const confirmAccount = async function (params:{ template: Buffer, to: string, login: string, confirmAccountUrl: string, returnUrl: string }) {
 
