@@ -74,7 +74,7 @@ app.post('/', async (req, res) => {
 });
 
 /**
- * @api {put} /send/confirm/email [Set mail to confirm account]
+ * @api {put} /send/confirm/email [Send mail to confirm account]
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
  * In case of error, the new status is MAIL_CONFIRMATION_TO_SEND_ERROR.

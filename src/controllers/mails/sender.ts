@@ -55,6 +55,7 @@ const confirmAccount = async function (params:{ template: Buffer, to: string, lo
 	var message = {
 		from: sender,
 		to: params.to,
+		text: "",
 		subject: "Confirmation de votre compte",
 		html: body
 	};
@@ -63,6 +64,7 @@ const confirmAccount = async function (params:{ template: Buffer, to: string, lo
 		const response = await transporter.sendMail(message);
 	}
 	catch (ex) {
+		console.log(ex);
 		throw new Error("MAIL_CONFIRMATION_TO_SEND_ERROR")
 	}
 };
@@ -82,10 +84,10 @@ export async function confirmAccounts(params: { email: string } = null): Promise
 				const user: IUser = await User.findOne({ _id: logins[i].idUser });
 				if (params == null && params.email == null) await confirmAccount({ template: htmlTemplate, to: user.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE });
 				else await confirmAccount({ template: htmlTemplate, to: params.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE });
+				await Login.updateOne({ _id: logins[i]._id }, { status: "WAIT_ACCOUNT_CONFIRMATION", updatedBy: 'mail_confirmation_send' });
 			}
 			catch (ex) {
-				console.log("MAIL_CONFIRMATION_TO_SEND_ERROR");
-				await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_CONFIRMATION_TO_SEND_ERROR" });
+				await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_CONFIRMATION_TO_SEND_ERROR", updatedBy: 'mail_confirmation_send' });
 				hasError = true;
 			}
 		};
