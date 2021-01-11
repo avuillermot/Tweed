@@ -37,8 +37,7 @@ const manageError = function (req, res, exception, httpCode) {
 }
 /**
  * @api {put} /logon [Log a user]
- * @apiName Logon
- * @apiGroup User
+ * @apiGroup Users
  * @apiDescription Log a user and return token. Login and password are sent in body.
  * @apiParam {JSON} Body {login: xxxxx, password: xxxx}
  * @apiSuccess (Succes) {JSON} Token Token encrypted (token id, login, entities[], email, expire, type credentials[])
@@ -60,6 +59,7 @@ app.put('/logon', async (req, res) => {
 
 /**
  * @api {post} / [Create user & login]
+ * @apiGroup Users
  * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
  * @apiSuccess (200) _
  * @apiError (500) _
@@ -77,6 +77,7 @@ app.post('/', async (req, res) => {
 
 /**
  * @api {put} /send/confirm/email [Send mail to confirm account]
+ * @apiGroup Users
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
  * In case of error, the new status is MAIL_CONFIRMATION_TO_SEND_ERROR.
@@ -101,6 +102,7 @@ app.put('/send/confirm/email', async (req, res) => {
 });
 /**
  * @api {get} /alive [Keep alive]
+ * @apiGroup Monitoring
  * @apiDescription Indicate if web site is alive
  * @apiSuccess (200) {String} _ OK TWEED
  */
@@ -109,6 +111,7 @@ app.get('/alive', async (req, res) => {
 });
 /**
  * @api {get} /confirm/account [Confirm account]
+ * @apiGroup Users
  * @apiDescription Confirm account set in query string.<br/>
  * @apiParam {QueryString} code Login of the account to confim
  * @apiParam {QueryString} returnUrl Redirect to this URL after confirmation.
