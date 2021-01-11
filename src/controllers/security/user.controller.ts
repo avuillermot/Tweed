@@ -39,12 +39,12 @@ export default class ServiceUser {
         return newUsr;
     }
 
-    public async confirmMail(id: string): Promise<boolean> {
+    public async setAccountActive(clogin: string): Promise<boolean> {
         let back: boolean = true;
-        let updatedBy: string = "confirm_mail";
-        let login: ILogin = await Login.findOne({ _id: id });
+        let updatedBy: string = "account_active";
+        let login: ILogin = await Login.findOne({ login: clogin });
         if (login != null) {
-            let res: any = await Login.updateOne({ _id: id }, { status: "ACTIVE", updatedBy: updatedBy });
+            let res: any = await Login.updateOne({ login: clogin }, { status: "ACTIVE", updatedBy: updatedBy });
             if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("No login set active");
 
             res = await User.updateOne({ _id: login.idUser }, { emailConfirmed: true, updatedBy: updatedBy });

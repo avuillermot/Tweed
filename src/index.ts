@@ -1,7 +1,8 @@
 import express = require('express');
 import https = require('https');
-import fs = require('fs');
+import fs from 'fs';
 import cors from 'cors';
+import url from 'url';
 import moment = require('moment');
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
@@ -9,10 +10,8 @@ import { confirmAccounts } from '../src/controllers/mails/sender';
 import { ApplicationDbSettings as DbSettings, ApplicationSetting } from './config/config';
 import bodyParser from 'body-parser';
 import ServiceUser from '../src/controllers/security/user.controller';
-import { IUser } from './models/security/user';
-import { ILogin } from './models/security/login';
 
-console.log("WORKSPACE:"+__dirname);
+console.log("WORKSPACE:" + __dirname);
 const options = {
     key: fs.readFileSync('./src/config/key.pem'),
     cert: fs.readFileSync('./src/config/cert.pem')
@@ -106,6 +105,19 @@ app.put('/send/confirm/email', async (req, res) => {
  */
 app.get('/alive', async (req, res) => {
     res.send("OK TWEED");
+});
+
+app.get('/confirm/account', async (req, res) => {
+    const queryObject:any = url.parse(req.url, true).query;
+    console.log(queryObject);
+    let servUser: ServiceUser = new ServiceUser();
+    await servUser.setAccountActive(queryObject.code);
+
+    res.writeHead(302, {
+        'Location': queryObject.returnUrl
+    });
+    res.end();
+    res.send();
 });
 
 https.createServer(options, app).listen(process.env.PORT, () => {

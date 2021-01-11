@@ -88,7 +88,7 @@ describe('Test about user & login', () => {
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: "willis", email: "confirm@test.com", password: "123456", confirmPassword: "123456" };
         let user:IUser = await ctrl.create(newUser);
         let login: ILogin = await Login.findOne({ login: "confirm@test.com" });
-        let result: boolean = await ctrl.confirmMail(login._id);
+        let result: boolean = await ctrl.setAccountActive("confirm@test.com");
         expect(result, "Confirm mail return true").equal(true);
 
         login = await Login.findOne({ login: "confirm@test.com" });

@@ -1,4 +1,5 @@
-import nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
+import fs from "fs";
 import User, { IUser } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
 import Parameter, { IParameter } from "../../models/parameter";
@@ -46,18 +47,16 @@ export async function sendNewPassword (params: { firstName: string, email:string
 	}
 };
 
-const confirmAccount = async function (email: string, username: string) {
+const confirmAccount = async function (params:{ template: Buffer, to: string, login: string, confirmAccountUrl: string }) {
 
-	let html = username + "Pour confirmer votre adresse e-mail, veuillez cliquer sur le lien suivant :";
-	html += ""
-	html += "Si vous avez des questions concernant la plateforme, n’hésitez pas à nous contacter à contact@allodocteur.fr";
+	let body = params.template.toString();
+	body = body.replace("{{confirmAccountUrl}}", params.confirmAccountUrl + "?code=" + params.login + "&returnUrl=" + escape("https://monecole.fr/"));
 
 	var message = {
 		from: sender,
-		to: email,
+		to: params.to,
 		subject: "Confirmation de votre compte",
-		text: "Plaintext version of the message",
-		html: html
+		html: body
 	};
 
 	try {
@@ -70,18 +69,19 @@ const confirmAccount = async function (email: string, username: string) {
 
 export async function confirmAccounts(params: { email: string } = null): Promise<void> {
 
+	const htmlTemplate: Buffer = fs.readFileSync("src/html-template/confirm-account.html");
+	const confirmAccountUrl : IParameter = await Parameter.findOne({ KEY: "CONFIRM_ACCOUNT_URL" });
+
 	const logins: ILogin[] = await Login.find({ status: 'MAIL_CONFIRMATION_TO_SEND' });
 	let hasError: boolean = false;
 
 	if (logins.length > 0) {
 		for (let i: number = 0; i < logins.length; i++) {
 			try {
+				console.log("Send confirm accout email for idUser :" + logins[i].idUser);
 				const user: IUser = await User.findOne({ _id: logins[i].idUser });
-				if (params == null && params.email == null) confirmAccount(user.email, user.email);
-				else {
-					await confirmAccount(params.email, user.email);
-					await Login.updateOne({ _id: logins[i]._id }, { status: "WAIT_ACCOUNT_CONFIRMATION" });
-				}
+				if (params == null && params.email == null) await confirmAccount({ template: htmlTemplate, to: user.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE });
+				else await confirmAccount({ template: htmlTemplate, to: params.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE });
 			}
 			catch (ex) {
 				console.log("MAIL_CONFIRMATION_TO_SEND_ERROR");
