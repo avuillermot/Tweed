@@ -47,10 +47,11 @@ export async function sendNewPassword (params: { firstName: string, email:string
 	}
 };
 
-const confirmAccount = async function (params:{ template: Buffer, to: string, login: string, confirmAccountUrl: string }) {
+const confirmAccount = async function (params:{ template: Buffer, to: string, login: string, confirmAccountUrl: string, returnUrl: string }) {
 
 	let body = params.template.toString();
-	body = body.replace("{{confirmAccountUrl}}", params.confirmAccountUrl + "?code=" + params.login + "&returnUrl=" + escape("https://monecole.fr/"));
+	while (body.indexOf("{{confirmAccountUrl}}") > - 1)
+		body = body.replace("{{confirmAccountUrl}}", params.confirmAccountUrl + "?code=" + params.login + "&returnUrl=" + escape(params.returnUrl));
 
 	var message = {
 		from: sender,
@@ -72,7 +73,8 @@ const confirmAccount = async function (params:{ template: Buffer, to: string, lo
 export async function confirmAccounts(params: { email: string } = null): Promise<void> {
 
 	const htmlTemplate: Buffer = fs.readFileSync("src/html-template/confirm-account.html");
-	const confirmAccountUrl : IParameter = await Parameter.findOne({ KEY: "CONFIRM_ACCOUNT_URL" });
+	const confirmAccountUrl: IParameter = await Parameter.findOne({ KEY: "CONFIRM_ACCOUNT_URL" });
+	const confirmAccountReturnUrl: IParameter = await Parameter.findOne({ KEY: "CONFIRM_ACCOUNT_RETURN_URL" });
 
 	const logins: ILogin[] = await Login.find({ status: 'MAIL_CONFIRMATION_TO_SEND' });
 	let hasError: boolean = false;
@@ -82,8 +84,8 @@ export async function confirmAccounts(params: { email: string } = null): Promise
 			try {
 				console.log("Send confirm accout email for idUser :" + logins[i].idUser);
 				const user: IUser = await User.findOne({ _id: logins[i].idUser });
-				if (params == null && params.email == null) await confirmAccount({ template: htmlTemplate, to: user.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE });
-				else await confirmAccount({ template: htmlTemplate, to: params.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE });
+				if (params == null && params.email == null) await confirmAccount({ template: htmlTemplate, to: user.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE, returnUrl: confirmAccountReturnUrl.VALUE });
+				else await confirmAccount({ template: htmlTemplate, to: params.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE, returnUrl: confirmAccountReturnUrl.VALUE });
 				await Login.updateOne({ _id: logins[i]._id }, { status: "WAIT_ACCOUNT_CONFIRMATION", updatedBy: 'mail_confirmation_send' });
 			}
 			catch (ex) {

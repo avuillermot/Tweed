@@ -36,7 +36,9 @@ const manageError = function (req, res, exception, httpCode) {
     else res.status(500).send(exception);
 }
 /**
- * @api {put} /logon [Logon]
+ * @api {put} /logon [Log a user]
+ * @apiName Logon
+ * @apiGroup User
  * @apiDescription Log a user and return token. Login and password are sent in body.
  * @apiParam {JSON} Body {login: xxxxx, password: xxxx}
  * @apiSuccess (Succes) {JSON} Token Token encrypted (token id, login, entities[], email, expire, type credentials[])
