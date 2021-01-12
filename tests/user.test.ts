@@ -1,6 +1,9 @@
 import { expect } from 'chai';
 import "mocha";
-import UserController, { ICreateUser, IUpdateUser } from "../src/controllers/security/user.controller";
+import { ICreateUser, CreateUserController } from "../src/controllers/users/create-user";
+import { IUpdateUser, UpdateUserController } from "../src/controllers/users/update-user";
+import { GenerateNewPasswordController }  from "../src/controllers/users/generate-new-password";
+import { LogonController } from "../src/controllers/users/logon-user";
 import User, { IUser} from "../src/models/security/user";
 import { ApplicationDbSettings } from "../src/config/config";
 import Login, { ILogin } from '../src/models/security/login';
@@ -8,13 +11,17 @@ import Login, { ILogin } from '../src/models/security/login';
 describe('Test about user & login', () => {
     let dbSettings: ApplicationDbSettings = new ApplicationDbSettings();
     dbSettings.connection();
-    dbSettings.dropDb();
+    //dbSettings.dropDb();
 
-    let ctrl: UserController = new UserController();
+    let servCreate: CreateUserController = new CreateUserController();
+    let servUpdate: UpdateUserController = new UpdateUserController();
+    let servPassword: GenerateNewPasswordController = new GenerateNewPasswordController();
+    let servLogon: LogonController = new LogonController();
+
     it('First name in upper case & last name in upper case', async () => {
         
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: "willis", email: "a1@test.com", password: "123456", confirmPassword: "123456" };
-        let user:IUser = await ctrl.create(newUser);
+        let user:IUser = await servCreate.create(newUser);
         expect("Bruce").equal(user.firstName);
         expect("WILLIS").equal(user.lastName);
         expect(user.created).not.equal(null, "Created ne peut pas etre null");
@@ -27,7 +34,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "", lastName: "willis", email: "a2@test.com", password: "123456", confirmPassword: "123456" };
         try {
-            let user: IUser = await ctrl.create(newUser);
+            let user: IUser = await servCreate.create(newUser);
             expect(true, "first name is empty and control is not ok").equal(false);
         }
         catch (ex) {
@@ -39,7 +46,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: null, lastName: "willis", email: "a3@test.com", password: "123456", confirmPassword: "123456" };
         try {
-            let user:IUser = await ctrl.create(newUser);
+            let user:IUser = await servCreate.create(newUser);
             expect(true, "first name is null and control is not ok").equal(false);
         }
         catch (ex) {
@@ -51,7 +58,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: "", email: "a4@test.com", password: "123456", confirmPassword: "123456" };
         try {
-            let user: IUser = await ctrl.create(newUser);
+            let user: IUser = await servCreate.create(newUser);
             expect(true, "last name is empty and control is not ok").equal(false);
         }
         catch (ex) {
@@ -63,7 +70,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: null, email: "a5@test.com", password: "123456", confirmPassword: "123456" };
         try {
-            let user:IUser = await ctrl.create(newUser);
+            let user:IUser = await servCreate.create(newUser);
             expect(true, "last name is null and control is not ok").equal(false);
         }
         catch (ex) {
@@ -75,7 +82,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: "willis", email: "a1@test.com", password: "123456", confirmPassword: "123456" };
         try {
-            let user:IUser = await ctrl.create(newUser);
+            let user:IUser = await servCreate.create(newUser);
             expect(true, "Email is duplicate").equal(false);
         }
         catch (ex) {
@@ -86,9 +93,9 @@ describe('Test about user & login', () => {
     it('On confirm account (from email)', async () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: "willis", email: "confirm@test.com", password: "123456", confirmPassword: "123456" };
-        let user:IUser = await ctrl.create(newUser);
+        let user:IUser = await servCreate.create(newUser);
         let login: ILogin = await Login.findOne({ login: "confirm@test.com" });
-        let result: boolean = await ctrl.setAccountActive("confirm@test.com");
+        let result: boolean = await servCreate.setAccountActive("confirm@test.com");
         expect(result, "Confirm mail return true").equal(true);
 
         login = await Login.findOne({ login: "confirm@test.com" });
@@ -102,7 +109,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "harrison", lastName: "ford", email: "hford@test.com", password: "123456", confirmPassword: "12345" };
         try {
-            let user: IUser = await ctrl.create(newUser);
+            let user: IUser = await servCreate.create(newUser);
         }
         catch (ex) {
             expect("Error: PASSWORD_DIFF").equal(ex.toString());
@@ -113,7 +120,7 @@ describe('Test about user & login', () => {
 
         let newUser: ICreateUser = <ICreateUser>{ firstName: "sylvester", lastName: "stallone", email: "sstallone@test.com", password: "12345", confirmPassword: "12345" };
         try {
-            let user: IUser = await ctrl.create(newUser);
+            let user: IUser = await servCreate.create(newUser);
         }
         catch (ex) {
             expect("Error: PASSWORD_SHORT").equal(ex.toString());
@@ -125,7 +132,7 @@ describe('Test about user & login', () => {
         let login:ILogin = await Login.findOne({ login: "confirm@test.com" });
         let upUser: IUpdateUser = <IUpdateUser>{ firstName: "demi", lastName: "moore", id:login._id };
 
-        let result: boolean = await ctrl.update(upUser, "current_user");
+        let result: boolean = await servUpdate.update(upUser, "current_user");
         let user:IUser = await User.findOne({ _id: login.idUser });
 
         expect(result, "Update not return true").equal(true);
@@ -135,7 +142,7 @@ describe('Test about user & login', () => {
 
     it('No Logon', async () => {
         try {
-            let result: { login: string } = await ctrl.logon("confirm@test.com", "1234567");
+            let result: { login: string } = await servLogon.logon("confirm@test.com", "1234567");
             expect(1).equal(2, "No login shoud be found");
         }
         catch (ex) {
@@ -145,11 +152,11 @@ describe('Test about user & login', () => {
     });
 
     it('Logon', async () => {
-        let result: { login: string } = await ctrl.logon("confirm@test.com", "123456");
+        let result: { login: string } = await servLogon.logon("confirm@test.com", "123456");
     });
 
     it('Generate password', async () => {
-        await ctrl.saveNewPassword("confirm@test.com");
+        await servPassword.setGenerateNewPassword("confirm@test.com");
         let login:ILogin = await Login.findOne({login: "confirm@test.com"});
         expect(login.status).equal("MAIL_NEW_PASSWORD_TO_SEND", "Should be MAIL_NEW_PASSWORD_TO_SEND");
     });
