@@ -24,7 +24,7 @@ export class LogonController {
 
 /**
  * @api {put} /logon [Log a user]
- * @apiGroup Users
+ * @apiGroup Logon
  * @apiDescription Log a user and return token. Login and password are sent in body.
  * @apiParam {JSON} Body {login: xxxxx, password: xxxx}
  * @apiSuccess (Succes) {JSON} Token Token encrypted (token id, login, entities[], email, expire, type credentials[])

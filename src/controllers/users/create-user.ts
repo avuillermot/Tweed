@@ -88,7 +88,7 @@ export class CreateUserController {
 
 /**
  * @api {post} / [Create user & login]
- * @apiGroup Users
+ * @apiGroup CreateUser
  * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
  * @apiSuccess (200) _
  * @apiError (500) _
@@ -106,7 +106,7 @@ router.post('/', async (req, res) => {
 
 /**
  * @api {get} /confirm/account [Confirm account]
- * @apiGroup Users
+ * @apiGroup CreateUser
  * @apiDescription Confirm account set in query string.<br/>
  * @apiParam {QueryString} code Login of the account to confim
  * @apiParam {QueryString} returnUrl Redirect to this URL after confirmation.
@@ -132,7 +132,7 @@ router.get('/confirm/account', async (req, res) => {
 
 /**
  * @api {put} /send/confirm/email [Confirm account]
- * @apiGroup Users
+ * @apiGroup CreateUser
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
  * In case of error, the new status is MAIL_CONFIRMATION_TO_SEND_ERROR.

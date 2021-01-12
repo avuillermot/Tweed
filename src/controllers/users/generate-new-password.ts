@@ -43,12 +43,11 @@ export class GenerateNewPasswordController {
         if (hasError) throw new Error("MAIL_NEW_PASSWORD_TO_SEND_EROR");
     }
 }
-
 /**
  * @api {put} /send/generate/password [Generate password]
- * @apiGroup Users
- * @apiDescription todo
- * @apiParam {JSON} Body {forceEmail: xxxxx} <br/> Send all email to this email (use only in dev mode). In production no parameter require.
+ * @apiGroup Password
+ * @apiDescription Generate a new password and send an email with this password.
+ * @apiParam {JSON} Body Optional - In dev mode, could force recipient with body JSON param {forceEmail: xxxxx}.
  * @apiSuccess (Succes) {Number} HttpCode 200
  * @apiError (Error) {Number} HttpCode 500
  */
@@ -68,7 +67,14 @@ router.put('/send/generate/password', async (req, res) => {
         manageError(req, res, ex, 500);
     }
 });
-
+/**
+ * @api {put} /send/generate/password [Generate password]
+ * @apiGroup Password
+ * @apiDescription Change login status to generate a new password. Done by a scheduled job.
+ * @apiParam {JSON} Body Login to generate a new password
+ * @apiSuccess (Succes) {Number} HttpCode 200
+ * @apiError (Error) {Number} HttpCode 500
+ */
 router.put('/ask/generate/password', async (req, res) => {
     if (req.body.login == "" || req.body.login == undefined || req.body.login == null) {
         res.status(500).send("Login value mandatory");
