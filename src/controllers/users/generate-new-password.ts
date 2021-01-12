@@ -44,7 +44,7 @@ export class GenerateNewPasswordController {
     }
 }
 /**
- * @api {put} /send/generate/password [Generate password]
+ * @api {put} /send/generate/password [Generate password & send mail]
  * @apiGroup Password
  * @apiDescription Generate a new password and send an email with this password.
  * @apiParam {JSON} Body Optional - In dev mode, could force recipient with body JSON param {forceEmail: xxxxx}.
@@ -68,7 +68,7 @@ router.put('/send/generate/password', async (req, res) => {
     }
 });
 /**
- * @api {put} /send/generate/password [Generate password]
+ * @api {put} /send/generate/password [Ask new password]
  * @apiGroup Password
  * @apiDescription Change login status to generate a new password. Done by a scheduled job.
  * @apiParam {JSON} Body Login to generate a new password

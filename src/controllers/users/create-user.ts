@@ -131,7 +131,7 @@ router.get('/confirm/account', async (req, res) => {
 });
 
 /**
- * @api {put} /send/confirm/email [Confirm account]
+ * @api {put} /send/confirm/email [Send mail confirm account]
  * @apiGroup CreateUser
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
