@@ -14,7 +14,7 @@ export class UpdateUserController {
         let back: boolean = true;
         let login: ILogin = await Login.findOne({ _id: user.id });
         if (login != null) {
-            let res: any = await User.updateOne({ _id: login.idUser }, { lastName: user.lastName, firstName: user.firstName, updatedBy: updatedBy });
+            let res: any = await User.updateOne({ _id: login.idUser }, { lastName: user.lastName, firstName: user.firstName, updatedBy: updatedBy }, { runValidators: true });
             if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) back = false;
         }
         else back = false;

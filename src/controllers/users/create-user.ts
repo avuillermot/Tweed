@@ -44,10 +44,10 @@ export class CreateUserController {
         let updatedBy: string = "account_active";
         let login: ILogin = await Login.findOne({ login: clogin });
         if (login != null) {
-            let res: any = await Login.updateOne({ login: clogin }, { status: "ACTIVE", updatedBy: updatedBy });
+            let res: any = await Login.updateOne({ login: clogin }, { status: "ACTIVE", updatedBy: updatedBy }, { runValidators: true });
             if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("No login set active");
 
-            res = await User.updateOne({ _id: login.idUser }, { emailConfirmed: true, updatedBy: updatedBy });
+            res = await User.updateOne({ _id: login.idUser }, { emailConfirmed: true, updatedBy: updatedBy }, { runValidators: true });
             if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("No user set active");
         }
         else throw new Error("No user/login known");
@@ -74,10 +74,10 @@ export class CreateUserController {
                     if (params == null && params.email == null) await serv.confirmAccount({ template: htmlTemplate, to: user.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE, returnUrl: confirmAccountReturnUrl.VALUE });
                     else await serv.confirmAccount({ template: htmlTemplate, to: params.email, login: logins[i].login, confirmAccountUrl: confirmAccountUrl.VALUE, returnUrl: confirmAccountReturnUrl.VALUE });
 
-                    await Login.updateOne({ _id: logins[i]._id }, { status: "WAIT_ACCOUNT_CONFIRMATION", updatedBy: 'mail_confirmation_send' });
+                    await Login.updateOne({ _id: logins[i]._id }, { status: "WAIT_ACCOUNT_CONFIRMATION", updatedBy: 'mail_confirmation_send' }, { runValidators: true });
                 }
                 catch (ex) {
-                    await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_CONFIRMATION_TO_SEND_ERROR", updatedBy: 'mail_confirmation_send' });
+                    await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_CONFIRMATION_TO_SEND_ERROR", updatedBy: 'mail_confirmation_send' }, { runValidators: true });
                     hasError = true;
                 }
             };

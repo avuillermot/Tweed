@@ -32,10 +32,10 @@ export class GenerateNewPasswordController {
                     if (params == null && params.email == null) await serv.sendNewPassword({ template: htmlTemplate, to: user.email, login: logins[i].login, password: pwds[0] });
                     else await serv.sendNewPassword({ template: htmlTemplate, to: params.email, password: pwds[0], login: logins[i].login });
 
-                    await Login.updateOne({ _id: logins[i]._id }, { status: "ACTIVE", password: pwds[0], updatedBy: 'mail_new_password_send' });
+                    await Login.updateOne({ _id: logins[i]._id }, { status: "ACTIVE", password: pwds[0], updatedBy: 'mail_new_password_send' }, { runValidators: true });
                 }
                 catch (ex) {
-                    await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_NEW_PASSWORD_TO_SEND_EROR", updatedBy: 'mail_new_password_send' });
+                    await Login.updateOne({ _id: logins[i]._id }, { status: "MAIL_NEW_PASSWORD_TO_SEND_EROR", updatedBy: 'mail_new_password_send' }, { runValidators: true });
                     hasError = true;
                 }
             };
