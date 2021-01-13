@@ -10,7 +10,7 @@ import { Router } from 'express';
 let USER_ERROR: any = {
     PASSWORD_DIFF: "PASSWORD_DIFF",
     PASSWORD_SHORT: "PASSWORD_SHORT",
-    ALREADY_EXIST: "ALREADY_EXIST"
+    EMAIL_ALREADY_EXIST: "EMAIL_ALREADY_EXIST"
 };
 
 export interface ICreateUser {
@@ -26,7 +26,7 @@ export class CreateUserController {
     public async create(user: ICreateUser): Promise<IUser> {
 
         let exist: IUser = await User.findOne({ email: user.email });
-        if (exist != null && exist != undefined) throw new Error(USER_ERROR.ALREADY_EXIST);
+        if (exist != null && exist != undefined) throw new Error(USER_ERROR.EMAIL_ALREADY_EXIST);
         if (user.confirmPassword != user.password) throw new Error(USER_ERROR.PASSWORD_DIFF);
         if (user.password.length < 6) throw new Error(USER_ERROR.PASSWORD_SHORT);
 
