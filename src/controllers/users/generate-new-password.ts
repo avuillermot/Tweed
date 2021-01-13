@@ -9,9 +9,12 @@ import fs from "fs";
 const router: Router = Router();
 
 export class GenerateNewPasswordController {
-    public async setGenerateNewPassword(login: string): Promise<void> {
-        let res = await Login.updateOne({ login: login }, { status: "MAIL_NEW_PASSWORD_TO_SEND" });
-        if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("Generate password error");
+    public async setGenerateNewPassword(email: string): Promise<void> {
+
+        let user: IUser = await User.findOne({ email: email });
+        if (user == null || user == undefined) throw new Error("EMAIL_NOT_FOUND");
+        let res = await Login.updateOne({ idUser: user._id }, { status: "MAIL_NEW_PASSWORD_TO_SEND" });
+        if (res.n == res.nModified && res.ok == res.nModified && res.ok != 1) throw new Error("GENERATE_PASSWORD_ERROR");
     }
 
     public async sendNewPasswords(params: { email: string } = null): Promise<void> {
@@ -76,13 +79,13 @@ router.put('/send/generate/password', async (req, res) => {
  * @apiError (Error) {Number} HttpCode 500
  */
 router.put('/ask/generate/password', async (req, res) => {
-    if (req.body.login == "" || req.body.login == undefined || req.body.login == null) {
+    if (req.body.email == "" || req.body.email == undefined || req.body.email == null) {
         res.status(500).send("Login value mandatory");
     }
     let serv: GenerateNewPasswordController = new GenerateNewPasswordController();
 
     try {
-        await serv.setGenerateNewPassword(req.body.login);
+        await serv.setGenerateNewPassword(req.body.email);
         res.send();
     }
     catch (ex) {
