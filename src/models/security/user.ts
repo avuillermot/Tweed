@@ -16,7 +16,7 @@ const UserSchema: Schema = new Schema({
     email: { type: String, required: true, unique: true },
     emailConfirmed: { type: Boolean, required: true, default: false },
     phone: { type: String, required: false, default: "" },
-    created: { type: Date, required: true, default: moment().utc() },
+    created: { type: Date, required: true, default: null },
     createdBy: { type: String, required: true, default: "create_account" },
     updated: { type: Date, required: true, default: moment().utc() },
     updatedBy: { type: String, required: true, default: "create_account" }
@@ -30,6 +30,7 @@ UserSchema.pre("save", function (next) {
         }
     }
     this["updated"] = moment().utc();
+    this["created"] = moment().utc();
     next();
 });
 

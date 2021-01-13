@@ -19,7 +19,7 @@ const LoginSchema: Schema = new Schema({
     password: { type: String, required: true, minlength: 6 },
     status: { type: String, required: true, default: "MAIL_CONFIRMATION_TO_SEND" },
     lastConnection: { type: Date, required: false, default: null },
-    created: { type: Date, required: true, default: moment().utc() },
+    created: { type: Date, required: true, default: null },
     createdBy: { type: String, required: true, default: "create_account" },
     updated: { type: Date, required: true, default: moment().utc() },
     updatedBy: { type: String, required: true, default: "create_account" }
@@ -27,6 +27,7 @@ const LoginSchema: Schema = new Schema({
 
 LoginSchema.pre("save", function (next) {
     this["updated"] = moment().utc();
+    this["created"] = moment().utc();
     next();
 });
 
