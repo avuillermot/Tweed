@@ -8,6 +8,7 @@ import routerLogon from '../src/controllers/users/logon-user';
 import routerCreateUser from '../src/controllers/users/create-user';
 import routerPassword from '../src/controllers/users/generate-new-password';
 import routerUpdateUser from '../src/controllers/users/update-user';
+import { Logger, ILog } from "../src/modules/logger";
 
 console.log("WORKSPACE:" + __dirname);
 const options = {
@@ -25,6 +26,13 @@ app.options('*', cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
+    res.on('finish', function () {
+        Logger.write(<ILog>{
+            statusCode: this.statusCode, statusMessage: this.statusMessage,
+            requestBody: JSON.stringify(req.body), requestQuery: JSON.stringify(req.query),
+            httpMethod: req.method, service: req.baseUrl
+        });
+    })
     next();
 });
 

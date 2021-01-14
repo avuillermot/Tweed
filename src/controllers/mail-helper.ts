@@ -1,9 +1,5 @@
-import generator from "generate-password";
 import nodemailer from "nodemailer";
-import fs from "fs";
-import User, { IUser } from "../models/security/user";
-import Login, { ILogin } from "../models/security/login";
-import Parameter, { IParameter } from "../models/parameter";
+import Parameter from "../models/parameter";
 
 let sender: string = "";
 let senderPassword: string = "";
