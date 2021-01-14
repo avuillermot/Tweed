@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
         Logger.write(<ILog>{
             statusCode: this.statusCode, statusMessage: this.statusMessage,
             requestBody: JSON.stringify(req.body), requestQuery: JSON.stringify(req.query),
-            httpMethod: req.method, service: req.baseUrl
+            httpMethod: req.method, service: req.originalUrl
         });
     })
     next();
