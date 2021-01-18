@@ -16,9 +16,9 @@ const UserSchema: Schema = new Schema({
     email: { type: String, required: true, unique: true },
     emailConfirmed: { type: Boolean, required: true, default: false },
     phone: { type: String, required: false, default: "" },
-    created: { type: Date, required: true, default: null },
+    created: { type: Date, required: true },
     createdBy: { type: String, required: true, default: "create_account" },
-    updated: { type: Date, required: true, default: moment().utc() },
+    updated: { type: Date, required: true},
     updatedBy: { type: String, required: true, default: "create_account" }
 });
 
@@ -29,8 +29,8 @@ UserSchema.pre("save", function (next) {
             this["firstName"] = this["firstName"].substring(0, 1).toUpperCase() + this["firstName"].substring(1);
         }
     }
-    this["updated"] = moment().utc();
-    this["created"] = moment().utc();
+    this.set("updated", moment().utc());
+    this.set("created", moment().utc());
     next();
 });
 
