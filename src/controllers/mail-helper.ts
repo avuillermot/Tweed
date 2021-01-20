@@ -1,51 +1,57 @@
 import nodemailer from "nodemailer";
 import Parameter from "../models/parameter";
 
-let sender: string = "";
-let senderPassword: string = "";
-let transporter: any = null;
-
-let initTransporter = function () {
-	transporter = nodemailer.createTransport({
-		host: "smtp.live.com",
-		port: 587,
-		secure: false, // true for 465, false for other ports
-		auth: {
-			user: sender,
-			pass: senderPassword
-		}
-	});
-	console.log("Email transporter ready !");
-};
-
-Parameter.findOne({ KEY: "EMAIL_SENDER" }).then((data) => {
-	sender = data.VALUE;
-	if (sender != "" && senderPassword != "") initTransporter();
-});
-
-Parameter.findOne({ KEY: "EMAIL_SENDER_PASSWORD" }).then((data) => {
-	senderPassword = data.VALUE;
-	if (sender != "" && senderPassword != "") initTransporter();
-});
 
 export class MailHelper {
 
-	public async sendNewPassword (params: { to: string, password: string, login: string, template: Buffer }) {
+	private static sender: string = "";
+	private static password: string = "";
+	private static transporter: any = null;
 
+	constructor() {
+		const initTransporter = function () {
+			MailHelper.transporter = nodemailer.createTransport({
+				host: "smtp.live.com",
+				port: 587,
+				secure: false, // true for 465, false for other ports
+				auth: {
+					user: MailHelper.sender,
+					pass: MailHelper.password
+				}
+			});
+			console.log("Email transporter ready !");
+		};
+
+		if (MailHelper.sender == "") {
+			Parameter.findOne({ KEY: "EMAIL_SENDER" }).then((data) => {
+				MailHelper.sender = data.VALUE;
+				if (MailHelper.sender != "" && MailHelper.password != "") initTransporter();
+			});
+		}
+
+		if (MailHelper.password == "") {
+			Parameter.findOne({ KEY: "EMAIL_SENDER_PASSWORD" }).then((data) => {
+				MailHelper.password = data.VALUE;
+				if (MailHelper.sender != "" && MailHelper.password != "") initTransporter();
+			});
+		}
+	}
+
+	public async sendNewPassword (params: { to: string, password: string, login: string, template: Buffer }) {
 		if (params != null && params != undefined) {
 			let body: string = params.template.toString();
 			while (body.indexOf("{{Password}}") > -1) body = body.replace("{{Password}}", params.password);
 			while (body.indexOf("{{Login}}") > -1) body = body.replace("{{Login}}", params.login);
 
 			let message = {
-				from: sender,
+				from: MailHelper.sender,
 				to: params.to,
 				subject: "Votre nouveau mot de passe",
 				html: body
 			};
 
 			try {
-				const response = await transporter.sendMail(message);
+				const response = await MailHelper.transporter.sendMail(message);
 			}
 			catch (ex) {
 				console.log(ex);
@@ -63,7 +69,7 @@ export class MailHelper {
 			body = body.replace("{{login}}", params.login);
 
 		var message = {
-			from: sender,
+			from: MailHelper.sender,
 			to: params.to,
 			text: "",
 			subject: "Confirmation de votre compte",
@@ -71,7 +77,7 @@ export class MailHelper {
 		};
 
 		try {
-			const response = await transporter.sendMail(message);
+			const response = await MailHelper.transporter.sendMail(message);
 		}
 		catch (ex) {
 			console.log(ex);

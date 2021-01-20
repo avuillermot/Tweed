@@ -1,6 +1,6 @@
 import fs from "fs";
 import url from 'url';
-import User, { IUser } from "../../models/security/user";
+import User, { IUser, UserHelper } from "../../models/security/user";
 import Login, { ILogin } from "../../models/security/login";
 import Parameter, { IParameter } from "../../models/parameter";
 import { manageError } from '../helper';
@@ -24,13 +24,13 @@ const router: Router = Router();
 
 export class CreateUserController {
     public async create(user: ICreateUser): Promise<IUser> {
-
         let exist: IUser = await User.findOne({ email: user.email });
         if (exist != null && exist != undefined) throw new Error(USER_ERROR.EMAIL_ALREADY_EXIST);
         if (user.confirmPassword != user.password) throw new Error(USER_ERROR.PASSWORD_DIFF);
         if (user.password.length < 6) throw new Error(USER_ERROR.PASSWORD_SHORT);
 
-        let newUsr: IUser = await User.create(<any>user);
+        let toSave = UserHelper.format(user);
+        let newUsr: IUser = await User.create(toSave);
 
         let login: ILogin = new Login(user);
         login.login = user.email;

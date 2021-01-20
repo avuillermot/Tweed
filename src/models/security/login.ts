@@ -21,19 +21,13 @@ const LoginSchema: Schema = new Schema({
     lastConnection: { type: Date, required: false, default: null },
     created: { type: Date, required: true, default: null },
     createdBy: { type: String, required: true, default: "create_account" },
-    updated: { type: Date, required: true, default: moment().utc() },
+    updated: { type: Date, required: true, default: null },
     updatedBy: { type: String, required: true, default: "create_account" }
 });
 
-LoginSchema.pre("save", function (next) {
-    this["updated"] = moment().utc();
-    this["created"] = moment().utc();
-    next();
-});
-
-LoginSchema.pre("updateOne", function (next) {
-    let _update = this["_update"];
-    _update["updated"] = moment().utc();
+LoginSchema.pre("validate", function (next) {
+    this.set("updated",moment().utc());
+    if (this.get("created") == null) this.set("created", moment().utc());
     next();
 });
 

@@ -11,19 +11,19 @@ import Login, { ILogin } from '../src/models/security/login';
 describe('Test about user & login', () => {
     let dbSettings: ApplicationDbSettings = new ApplicationDbSettings();
     dbSettings.connection();
-    //dbSettings.dropDb();
+    dbSettings.dropDb();
 
     let servCreate: CreateUserController = new CreateUserController();
     let servUpdate: UpdateUserController = new UpdateUserController();
     let servPassword: GenerateNewPasswordController = new GenerateNewPasswordController();
     let servLogon: LogonController = new LogonController();
 
-    it('First name in upper case & last name in upper case', async () => {
+   it('First name in upper case & last name in upper case', async () => {
         
         let newUser: ICreateUser = <ICreateUser>{ firstName: "bruce", lastName: "willis", email: "a1@test.com", password: "123456", confirmPassword: "123456" };
         let user:IUser = await servCreate.create(newUser);
-        expect("Bruce").equal(user.firstName);
-        expect("WILLIS").equal(user.lastName);
+        expect("Bruce").equal(user.firstName, "First char should be in uppercase");
+        expect("WILLIS").equal(user.lastName, "Should be in uppercase");
         expect(user.created).not.equal(null, "Created ne peut pas etre null");
         expect(user.createdBy).equal("create_account", "Should be create_account");
         expect(user.updated).not.equal(null, "Created ne peut pas etre null");
@@ -140,7 +140,7 @@ describe('Test about user & login', () => {
         expect(user.updatedBy).equal("current_user", "Should be current_user");
     });
 
-    it('No Logon', async () => {
+    /*it('No Logon', async () => {
         try {
             let result: { login: string } = await servLogon.logon("confirm@test.com", "1234567");
             expect(1).equal(2, "No login shoud be found");
@@ -159,5 +159,5 @@ describe('Test about user & login', () => {
         await servPassword.setGenerateNewPassword("confirm@test.com");
         let login:ILogin = await Login.findOne({login: "confirm@test.com"});
         expect(login.status).equal("MAIL_NEW_PASSWORD_TO_SEND", "Should be MAIL_NEW_PASSWORD_TO_SEND");
-    });
+    });*/
 });
