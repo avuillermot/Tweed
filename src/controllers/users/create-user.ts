@@ -1,7 +1,7 @@
 import fs from "fs";
 import url from 'url';
 import User, { IUser, UserHelper } from "../../models/security/user";
-import Login, { ILogin } from "../../models/security/login";
+import Login, { ILogin, LoginHelper } from "../../models/security/login";
 import Parameter, { IParameter } from "../../models/parameter";
 import { manageError } from '../helper';
 import { MailHelper } from "../mail-helper";
@@ -35,6 +35,7 @@ export class CreateUserController {
         let login: ILogin = new Login(user);
         login.login = user.email;
         login.idUser = newUsr._id;
+        login = LoginHelper.format(login);
         let newLogin: ILogin = await Login.create(login);
         return newUsr;
     }

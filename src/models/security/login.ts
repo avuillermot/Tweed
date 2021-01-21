@@ -25,11 +25,13 @@ const LoginSchema: Schema = new Schema({
     updatedBy: { type: String, required: true, default: "create_account" }
 });
 
-LoginSchema.pre("validate", function (next) {
-    this.set("updated",moment().utc());
-    if (this.get("created") == null) this.set("created", moment().utc());
-    next();
-});
+export class LoginHelper {
+    public static format(login: any): ILogin {
+        login.updated = moment().utc().toDate();
+        if (login.created == null) login.created = moment().utc().toDate();
+        return login;
+    }
+}
 
 export default model<ILogin>('Login', LoginSchema);
 
