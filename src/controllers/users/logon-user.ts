@@ -26,13 +26,13 @@ export class LogonController {
  * @api {put} /logon [Log a user]
  * @apiGroup Logon
  * @apiDescription Log a user and return token. Login and password are sent in body.
- * @apiParamExample {json} Request-Example:
+ * @apiParamExample Request-Example:
  *     {
  *       "login": "", 
  *       "password": ""
  *     }
  *
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200
  *     {
  *       "id": "TokenId",
@@ -41,7 +41,7 @@ export class LogonController {
  *       "expire": "Date",
  *       "type": "User type"
  *     }
- * @apiErrorExample {text} Error-Response:
+ * @apiErrorExample Error-Response:
  *     HTTP/1.1 401
  * @apiSampleRequest off
  */
