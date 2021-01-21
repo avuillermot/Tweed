@@ -26,16 +26,31 @@ export class LogonController {
  * @api {put} /logon [Log a user]
  * @apiGroup Logon
  * @apiDescription Log a user and return token. Login and password are sent in body.
- * @apiParam {JSON} Body {login: xxxxx, password: xxxx}
- * @apiSuccess (Succes) {JSON} Token Token encrypted (token id, login, entities[], email, expire, type credentials[])
- * @apiError (Error) {Number} HttpCode 401
+ * @apiParamExample Request-Example:
+ *     {
+ *       "login": "", 
+ *       "password": ""
+ *     }
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200
+ *     {
+ *       "id": "TokenId",
+ *       "login": "",
+ *       "email": "",
+ *       "expire": "Date",
+ *       "type": "User type"
+ *     }
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401
+ * @apiSampleRequest off
  */
 router.put('/logon', async (req, res) => {
     let serv: LogonController = new LogonController();
 
     try {
         let back: { login: string, email: string } = await serv.logon(req.body.login, req.body.password);
-        let body: any = { id: uuidv4(), created: moment.utc(), login: back.login, entities: [], email: back.email, expire: moment.utc().add(8, "hours").toDate(), type: "USER", credentials: [] };
+        let body: any = { id: uuidv4(), created: moment.utc(), login: back.login, entities: [], email: back.email, expire: moment.utc().add(8, "hours").toDate(), type: "USER" };
         let encrypt: string = await jwt.sign(body, ApplicationSetting.jtokenSecretKey);
         res.send({ token: encrypt });
     }

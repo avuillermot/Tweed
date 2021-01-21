@@ -45,7 +45,11 @@ app.use(routerUpdateUser);
  * @api {get} /alive [Keep alive]
  * @apiGroup Monitoring
  * @apiDescription Indicate if web site is alive
- * @apiSuccess (200) {String} _ OK TWEED
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404
+ * @apiSampleRequest off
  */
 app.get('/alive', async (req, res) => {
     res.send("OK TWEED");

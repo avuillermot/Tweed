@@ -91,9 +91,20 @@ export class CreateUserController {
  * @api {post} / [Create user & login]
  * @apiGroup CreateUser
  * @apiDescription Create & user and login in database. A email need to be send to confirm email before login.
- * @apiParam (Succes) {JSON} Body {fistName: string, lastName: string, email:string, password: string, confirmPassword: string}
- * @apiSuccess (200) {Number} HttpStatus 200
- * @apiError (500) {Number} HttpStatus 500, response includes error description
+ * @apiParamExample Request-Example:
+ *     HTTP/1.1 200
+ *     {
+ *       "fistName": "string",
+ *       "lastName": "string",
+ *       "email": "email",
+ *       "password": "string, length > 6",
+ *       "confirmPassword": "string, length > 6"
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500
+ * @apiSampleRequest off
  */
 router.post('/', async (req, res) => {
     try {
@@ -107,13 +118,16 @@ router.post('/', async (req, res) => {
 });
 
 /**
- * @api {get} /confirm/account [Confirm account]
+ * @api {get} /confirm/account?code=&returnUrl= [Confirm account]
  * @apiGroup CreateUser
  * @apiDescription Confirm account set in query string.<br/>
- * @apiParam {QueryString} code Login of the account to confim
- * @apiParam {QueryString} returnUrl Redirect to this URL after confirmation.
- * @apiSuccess (Succes) {Number} HttpStatus 302
- * @apiError (Error) {Number} HttpStatus 500, response includes error description
+ * @apiParam {String} code Login of the account to confim
+ * @apiParam {String} returnUrl Redirect to this URL after confirmation.
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 302 Redirection
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500
+ * @apiSampleRequest off
  */
 router.get('/confirm/account', async (req, res) => {
     try {
@@ -138,9 +152,17 @@ router.get('/confirm/account', async (req, res) => {
  * @apiDescription Select all logins with MAIL_CONFIRMATION_TO_SEND status and send a mail for each to confirm account.<br/>
  * After that, update status to WAIT_ACCOUNT_CONFIRMATION. <br/>
  * In case of error, the new status is MAIL_CONFIRMATION_TO_SEND_ERROR.
- * @apiParam {JSON} Body {forceEmail: xxxxx} <br/> Send all email to this email (use only in dev mode). In production no parameter require.
- * @apiSuccess (Succes) {Number} HttpStatus 200
- * @apiError (Error) {Number} HttpStatus 500
+ * @apiParamExample Request-Example:
+ *     HTTP/1.1 200
+ *     {
+ *       "forceEmail": "optional if in test mode all the mails need to be sent to a specific, 
+ *       in production no parameter required"
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500
+ * @apiSampleRequest off
  */
 router.put('/send/confirm/email', async (req, res) => {
     let email: string = ""

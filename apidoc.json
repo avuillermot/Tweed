@@ -1,6 +1,10 @@
 {
   "name": "TWEED",
-  "version": "0.1.0",
-  "description": "APIs description",
-  "title": "TWEED APIs"
+  "version": "0.0.0",
+  "description": "This documentation is about user scope (creation & account confirmation, regenerate password, update, token, ....)",
+  "title": "TWEED APIs",
+  "sampleUrl":  "nonde",
+  "template": {
+    "withCompare": false
+  } 
 }

@@ -50,9 +50,16 @@ export class GenerateNewPasswordController {
  * @api {put} /send/generate/password [Generate password & send mail]
  * @apiGroup Password
  * @apiDescription Generate a new password and send an email with this password.
- * @apiParam {JSON} Body Optional - In dev mode, could force recipient with body JSON param {forceEmail: xxxxx}.
- * @apiSuccess (Succes) {Number} HttpCode 200
- * @apiError (Error) {Number} HttpCode 500
+ * @apiParamExample Request-Example:
+ *     {
+ *        "forceEmail": "optional if in test mode all the mails need to be sent to a specific,
+ *        in production no parameter required"
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500
+ * @apiSampleRequest off
  */
 router.put('/send/generate/password', async (req, res) => {
     let serv: GenerateNewPasswordController = new GenerateNewPasswordController();
@@ -74,9 +81,15 @@ router.put('/send/generate/password', async (req, res) => {
  * @api {put} /send/generate/password [Ask new password]
  * @apiGroup Password
  * @apiDescription Change login status to generate a new password. Done by a scheduled job.
- * @apiParam {JSON} Body Login to generate a new password
- * @apiSuccess (Succes) {Number} HttpCode 200
- * @apiError (Error) {Number} HttpCode 500
+ * @apiParamExample Request-Example:
+ *     {
+ *        "email": "string"
+ *     }
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500
+ * @apiSampleRequest off
  */
 router.put('/ask/generate/password', async (req, res) => {
     if (req.body.email == "" || req.body.email == undefined || req.body.email == null) {
