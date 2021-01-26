@@ -22,6 +22,11 @@ const UserSchema: Schema = new Schema({
     updatedBy: { type: String, required: true, default: "create_account" }
 });
 
+UserSchema.path('email').validate(function (email) {
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email); // Assuming email has a text attribute
+}, 'The e-mail field must be valid.')
+
 export class UserHelper {
     public static format(user: any): IUser {
         if (user.lastName != null && user.lastName != undefined) user.lastName = user.lastName.toUpperCase();
@@ -34,7 +39,7 @@ export class UserHelper {
         if (user.created == null) user.created = moment().utc().toDate();
         return user;
     }
-}
+};
 
 export default model<IUser>('Users', UserSchema);
 
